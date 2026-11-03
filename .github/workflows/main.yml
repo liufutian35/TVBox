@@ -16,18 +16,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ========== 新增：修改build.gradle，修复JVM版本冲突 ==========
-      - name: Fix kotlin jvmTarget
-        run: |
-          sed -i '/android {/a \
-              kotlinOptions { \
-                  jvmTarget = "1.8" \
-              }' app/build.gradle
-
-      # ========== 新增：替换为阿里云maven镜像，解决国外源超时 ==========
-      - name: Replace maven repo to aliyun
-        run: |
-          sed -i 's|mavenCentral()|maven { url "https://maven.aliyun.com/repository/public" }|g' settings.gradle
+      # 重点：安装Android SDK + NDK，这个是pyramid模块必须的
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
 
       - name: Build arm64GenericRelease
         run: ./gradlew assembleArm64GenericRelease --stacktrace
